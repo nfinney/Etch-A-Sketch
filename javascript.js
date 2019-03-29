@@ -21,12 +21,16 @@ function createDivs(squaresPerSide) {
         var newDiv = document.createElement('div');
         newDiv.id = 'square-'+i;
         newDiv.className = 'gridbox';
-        // newDiv.addEventListener('mousenter', e => e.classList.add('moused-over'));
+        // newDiv.addEventListener('mouseenter', mousedOver);
+        newDiv.addEventListener('mouseenter', e => e.target.classList.add('moused-over') );
         fragment.appendChild(newDiv);
     }
 }
 
-// function add
+// function mousedOver(e) {
+//     console.log(e.target);
+
+// }
 
 
 // CALL FUNCTIONS TO INITIATE SQUARES AND THE WAY THEY WORK 

@@ -39,7 +39,7 @@ function createDivs(squaresPerSide) {
         newDiv.className = 'gridbox';
         newDiv.style.border = '1px solid black';
         // newDiv.addEventListener('mouseenter', mousedOver);
-        newDiv.addEventListener('mouseover', e => e.target.classList.add('moused-over') );
+        newDiv.addEventListener('mouseover', e => e.target.style.backgroundColor = 'yellowgreen');
         fragment.appendChild(newDiv);
     }
 }
@@ -67,7 +67,7 @@ function whichButton(e) {
         case 'Default Color':
             break;
         case 'Erase':
-            document.querySelectorAll('div').forEach(element => element.classList.remove('moused-over'));
+            document.querySelectorAll('div').forEach(element => element.style.backgroundColor = 'white');
             break;
     }
 }

@@ -7,6 +7,7 @@ let buttonContainer = document.createElement('div');
 let fragment = document.createDocumentFragment(); // variable to hold all the divs and add them all at once versus 
 let buttonFragment = document.createDocumentFragment(); // variable to hold all the buttons
 let squaresPerSide = 16;
+let isDefaultColor = true;
 
 
 // SETTING VARIABLE CSS PROPERTIES
@@ -38,7 +39,7 @@ function createDivs(squaresPerSide) {
         newDiv.id = 'square-'+i;
         newDiv.className = 'gridbox';
         newDiv.style.border = '1px solid black';
-        newDiv.dataset.mouseCount = 0;
+        newDiv.dataset.mouseCount = 1;
         // newDiv.addEventListener('mouseenter', mousedOver);
         // newDiv.addEventListener('mouseover', returnRGB(true) );
         returnRGB(newDiv, true);
@@ -71,7 +72,8 @@ function whichButton(e) {
             // document.querySelectorAll('.gridbox').forEach(element => element.removeEventListener('mouseover', returnRGB(), false ));
             // document.querySelectorAll('.gridbox').forEach(element => element.addEventListener('mouseover', function(){ returnRGB(e.target, false) } )); 
             // document.querySelectorAll('.gridbox').forEach(element => returnRGB(false)); 
-            document.querySelectorAll('.gridbox').forEach(element => returnRGB(element, false));
+            isDefaultColor = false;
+            document.querySelectorAll('.gridbox').forEach(element => returnRGB(element, isDefaultColor));
 
             break;
         case 'Default Color':
@@ -79,11 +81,14 @@ function whichButton(e) {
             // document.querySelectorAll('.gridbox').forEach(element => element.addEventListener('mouseover', function(){ returnRGB(e.target, true) } ));
             // document.querySelectorAll('.gridbox').forEach(element => element.addEventListener('mouseover', () => e.target.style.backgroundColor = returnRGB(true)));
             // document.querySelectorAll('.gridbox').forEach(element => returnRGB(true)); 
-            document.querySelectorAll('.gridbox').forEach(element => returnRGB(element, true));
+            isDefaultColor = true;
+            document.querySelectorAll('.gridbox').forEach(element => returnRGB(element, isDefaultColor));
             break;
         case 'Erase':
             document.querySelectorAll('.gridbox').forEach(element => element.style.backgroundColor = 'white');
-            document.querySelectorAll('.gridbox').forEach(element => element.dataset.mouseCount = 0);
+            document.querySelectorAll('.gridbox').forEach(element => element.dataset.mouseCount = 1);
+            document.querySelectorAll('.gridbox').forEach(element => returnRGB(element, isDefaultColor));
+
             break;
     }
 }
@@ -94,24 +99,35 @@ function test(input) {
 }
 
 // FUNCTION THAT RETURNS RGB HUE FOR THE 'RANDOM COLOR' BUTTON
-// function returnRGB(isDefaultColor, mouseCount = 0) {
-function returnRGB(element, isDefaultColor, mouseCount = 0) {
-    // console.log(element);
-    // console.log('default is ' + isDefaultColor);
+function returnRGB(element, isDefaultColor) {
+
+    // remove the previously added event listener from all the grid squares, otherwise endless listeners are fired
     element.removeEventListener('mouseover', returnRGB, false);
+
+    var mouseCount = element.dataset.mouseCount;
+    
     if(isDefaultColor){
-        console.log('in default');
-        // console.log(element);
-        element.addEventListener('mouseover', () => element.style.backgroundColor = 'yellowGreen');
-        // return 'yellowGreen';
-        // removeEventListener('mouseover', returnRGB, false);
-        // return e => e.target.style.backgroundColor = 'yellowGreen';
+        element.addEventListener('mouseover', function(){
+            if(element.dataset.mouseCount >= 10) {
+                element.dataset.mouseCount = 1;
+            }
+            element.style.backgroundColor = 'yellowGreen';
+        });
     } else {
-        console.log('in random');
-        element.addEventListener('mouseover', () => element.style.backgroundColor = 'purple');
-        // removeEventListener('mouseover', returnRGB, true);
-        // return e => e.target.style.backgroundColor = 'purple';
-        // return 'purple';
+        element.addEventListener('mouseover', function(){
+            var opacity;
+            var hue = 'rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',';
+            if(mouseCount >= 10){
+                hue = 'black';
+                element.dataset.mouseCount = 1;
+            } else {
+                opacity = mouseCount/10;
+                hue = hue + opacity + ')';
+                mouseCount++;
+                element.dataset.mouseCount = mouseCount;
+            }            
+            element.style.backgroundColor = hue;
+        }); 
     }
 }
 

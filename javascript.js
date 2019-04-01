@@ -27,8 +27,6 @@ container.style.display = 'grid';
 container.style.height = '600px';
 container.style.margin = '-280px auto';
 container.style.width = '600px';
-container.style.gridTemplateColumns = 'repeat(' + squaresPerSide + ', 1fr)';
-container.style.gridTemplateRows = 'repeat(' + squaresPerSide + ', 1fr)';
 
 
 
@@ -40,12 +38,15 @@ function createDivs(squaresPerSide) {
         newDiv.className = 'gridbox';
         newDiv.style.border = '1px solid black';
         newDiv.dataset.mouseCount = 1;
-        // newDiv.addEventListener('mouseenter', mousedOver);
-        // newDiv.addEventListener('mouseover', returnRGB(true) );
         returnRGB(newDiv, true);
         fragment.appendChild(newDiv);
     }
+
+    // ROWS AND COLUMNS NEED TO BE SET HERE FOR WHEN A USER RESETS THE BOARD
+    container.style.gridTemplateColumns = 'repeat(' + squaresPerSide + ', 1fr)';
+    container.style.gridTemplateRows = 'repeat(' + squaresPerSide + ', 1fr)';
 }
+
 
 // FUNCTION THAT CREATES THE BUTTONS ON THE LEFT SIDE OF THE PAGE
 function createButtons(buttonNames) {
@@ -60,27 +61,24 @@ function createButtons(buttonNames) {
     }
 };
 
+
 // FUNCTION THAT DETERMINES WHICH BUTTON WAS PRESSED AND EXECUTES BUTTON'S GOAL/TASK
 function whichButton(e) {
     let buttonID = e.target.id;
     console.log(buttonID);
     switch(buttonID){
         case 'Reset Board':
+            squaresPerSide = prompt('How many squares per side would you like for your new Etch-A-Sketch?');
+            document.querySelectorAll('.gridbox').forEach(element => element.parentNode.removeChild(element));
+            createDivs(squaresPerSide);
+            container.appendChild(fragment);
+            document.querySelectorAll('.gridbox').forEach(element => returnRGB(element, isDefaultColor));
             break;
         case 'Random Colors':
-            //the {} allows us to pass the event item and other variables to the outside function returnRGB()
-            // document.querySelectorAll('.gridbox').forEach(element => element.removeEventListener('mouseover', returnRGB(), false ));
-            // document.querySelectorAll('.gridbox').forEach(element => element.addEventListener('mouseover', function(){ returnRGB(e.target, false) } )); 
-            // document.querySelectorAll('.gridbox').forEach(element => returnRGB(false)); 
             isDefaultColor = false;
             document.querySelectorAll('.gridbox').forEach(element => returnRGB(element, isDefaultColor));
-
             break;
         case 'Default Color':
-            // document.querySelectorAll('.gridbox').forEach(element => element.removeEventListener('mouseover', returnRGB(), false ));
-            // document.querySelectorAll('.gridbox').forEach(element => element.addEventListener('mouseover', function(){ returnRGB(e.target, true) } ));
-            // document.querySelectorAll('.gridbox').forEach(element => element.addEventListener('mouseover', () => e.target.style.backgroundColor = returnRGB(true)));
-            // document.querySelectorAll('.gridbox').forEach(element => returnRGB(true)); 
             isDefaultColor = true;
             document.querySelectorAll('.gridbox').forEach(element => returnRGB(element, isDefaultColor));
             break;
@@ -88,17 +86,12 @@ function whichButton(e) {
             document.querySelectorAll('.gridbox').forEach(element => element.style.backgroundColor = 'white');
             document.querySelectorAll('.gridbox').forEach(element => element.dataset.mouseCount = 1);
             document.querySelectorAll('.gridbox').forEach(element => returnRGB(element, isDefaultColor));
-
             break;
     }
 }
 
-function test(input) {
-    input.addEventListener('mouseover', returnRGB(false) );
-    // console.log(input);
-}
 
-// FUNCTION THAT RETURNS RGB HUE FOR THE 'RANDOM COLOR' BUTTON
+// FUNCTION THAT RETURNS RGB HUE FOR THE 'RANDOM COLOR' & DEFAULT BUTTONS
 function returnRGB(element, isDefaultColor) {
 
     // remove the previously added event listener from all the grid squares, otherwise endless listeners are fired
